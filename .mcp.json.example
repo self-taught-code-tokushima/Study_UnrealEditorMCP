@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "ue_editor_mcp_dev": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "your-path-here",
+        "unreal-editor-mcp"
+      ],
+      "env": {}
+    }
+  }
+}
