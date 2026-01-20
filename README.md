@@ -1,4 +1,7 @@
-# Unreal Editor "Toy" MCP
+# Study UnrealEditorMCP
+
+Unreal Engine 5 エディターと MCP (Model Context Protocol) を連携させるための学習用プロジェクトです。
+このプロジェクトでは、Claude AI が Unreal Editor を操作できるようになります。
 
 ## 目次
 
@@ -30,7 +33,7 @@
 ```
 Claude Desktop/VS Code/Claude Code
     ↓ (MCP プロトコル)
-Python MCP Server (unreal_editor_mcp)
+Python MCP Server (study-unrealeditormcp)
     ↓ (HTTP REST API)
 Unreal Editor Plugin (UnrealEditorMCP)
     ↓
@@ -40,9 +43,9 @@ Unreal Engine 5 Editor
 ## プロジェクト構成
 
 ```
-UnrealEditorToyMCP/
+Study_UnrealEditorMCP/
 ├── src/                              # Python MCP サーバーのソースコード
-│   └── unreal_editor_mcp/
+│   └── study_unrealeditormcp/
 │       ├── server.py                 # MCP サーバーのメインファイル
 │       ├── connection.py             # Unreal Editor との接続管理
 │       └── tools/
@@ -76,18 +79,25 @@ UnrealEditorToyMCP/
 
 ### ソフトウェア
 
-- **Unreal Engine**
-- **Python**
-- **uv** 
-- **Task**
+- **Unreal Engine** - ゲームエンジン本体
+- **Python** - MCP サーバーを動かすため
+- **uv** - Python パッケージマネージャー (pip でも良いですが、uv を入れておきましょう)
+- **Claude Desktop** または **VS Code** または **Claude Code** - Claude AI クライアント
+- **Task** - タスクランナー（これに関しては必須ではありません）
+
+### 知識
+
+- Python の文法が何となく分かって調べながら読める
+- Unreal Engine と Unreal C++ を使ったチュートリアルをしたことがある
+- HTTP/REST API を少し聞いたことがある
 
 ## セットアップ手順
 
 ### 1. リポジトリのクローン
 
 ```bash
-git clone https://github.com/self-taught-code-tokushima/UnrealEditorToyMCP.git
-cd UnrealEditorToyMCP
+git clone https://github.com/self-taught-code-tokushima/Study_UnrealEditorMCP.git
+cd Study_UnrealEditorMCP
 ```
 
 ### 2. Python 環境のセットアップ
@@ -103,11 +113,24 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 uv sync
 ```
 
+#### pip (どうしても uv を導入できない場合)
+
+```bash
+# 仮想環境の作成
+python -m venv .venv
+
+# 仮想環境の有効化（Windows PowerShell）
+.venv\Scripts\Activate.ps1
+
+# 依存パッケージのインストール
+pip install -e .
+```
+
 ### 3. Unreal Engine プロジェクトを開く
 
 1. `SampleProject/SampleProject.uproject` をダブルクリック
 2. Unreal Editor が起動します
-3. プラグイン `UnrealEditorToyMCP` が自動的に読み込まれます
+3. プラグイン `UnrealEditorMCP` が自動的に読み込まれます
 
 ### 4. MCP サーバーの動作確認
 
@@ -123,7 +146,7 @@ uv run python scripts/test_mcp.py
 
 正常に動作すると、`pong` というメッセージが返ってきます。
 
-もし、ここで失敗する場合には、`UnrealEditorToyMCP` で使っている `3000` ポートが他のアプリにすでに使われている等の問題が出ているかもしれません。
+もし、ここで失敗する場合には、`UnrealEditorMCP` で使っている `3000` ポートが他のアプリにすでに使われている等の問題が出ているかもしれません。
 
 ## MCP の設定方法
 
@@ -142,13 +165,13 @@ Claude Desktop で MCP サーバーを使えるようにします。
 ```json
 {
   "mcpServers": {
-    "ue_editor_mcp": {
+    "study-ue_editor_mcp": {
       "type": "stdio",
       "command": "uvx",
       "args": [
         "--from",
-        "git+https://github.com/self-taught-code-tokushima/UnrealEditorToyMCP",
-        "unreal-editor-mcp"
+        "git+https://github.com/self-taught-code-tokushima/Study_UnrealEditorMCP",
+        "study-unrealeditormcp"
       ],
       "env": {}
     }
@@ -160,10 +183,54 @@ Claude Desktop で MCP サーバーを使えるようにします。
 
 1. Claude Desktop を終了する
 2. 上記の設定ファイルをテキストエディタで開く
-3. 既に `mcpServers` セクションがある場合は、`ue_editor_mcp` を追加
+3. 既に `mcpServers` セクションがある場合は、`study-ue_editor_mcp` を追加
 4. ファイルを保存
 5. Claude Desktop を再起動
 6. Claude Desktop の設定画面で MCP サーバーが認識されているか確認
+
+### VS Code での設定
+
+VS Code の Claude 拡張機能で MCP サーバーを使えるようにします。
+
+#### 前提条件
+
+- VS Code がインストールされている
+- Claude for VS Code 拡張機能がインストールされている
+
+#### 設定ファイルの場所
+
+VS Code のワークスペース設定、またはユーザー設定に追加します。
+
+- **ワークスペース設定**: `.vscode/settings.json`
+- **ユーザー設定**: `settings.json`（VS Code の設定から開く）
+
+#### 設定内容
+
+```json
+{
+  "claude.mcpServers": {
+    "study-ue_editor_mcp": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/self-taught-code-tokushima/Study_UnrealEditorMCP",
+        "study-unrealeditormcp"
+      ],
+      "env": {}
+    }
+  }
+}
+```
+
+#### 設定手順
+
+1. VS Code を開く
+2. `Ctrl+Shift+P`（macOS: `Cmd+Shift+P`）でコマンドパレットを開く
+3. "Preferences: Open User Settings (JSON)" を選択
+4. 上記の設定を追加
+5. ファイルを保存
+6. VS Code を再読み込み（`Ctrl+Shift+P` → "Developer: Reload Window"）
 
 ### Claude Code での設定
 
@@ -174,7 +241,7 @@ Claude Code（CLI）で MCP サーバーを使えるようにします。
 1. プロジェクトルートで以下を実行します。
 
 ```sh
-claude mcp add -s project --transport stdio ue_editor_mcp -- uvx --from git+https://github.com/self-taught-code-tokushima/UnrealEditorToyMCP unreal-editor-mcp
+claude mcp add -s project --transport stdio study-ue_editor_mcp -- uvx --from git+https://github.com/self-taught-code-tokushima/Study_UnrealEditorMCP study-unrealeditormcp
 ```
 
 2. プロジェクトルートに `.mcp.json` が作成され、上記の設定が反映されています。
@@ -254,7 +321,7 @@ Unreal Editor 側で実行したい機能を C++ で実装します。
 
 Python MCP サーバーに新しいツールを定義します。
 
-ファイル: `src/unreal_editor_mcp/tools/editor_tools.py`
+ファイル: `src/study_unrealeditormcp/tools/editor_tools.py`
 
 ```python
 @mcp.tool()
@@ -287,11 +354,11 @@ claude
 
 #### Python MCP サーバーのログ
 
-ログファイル: `unrealeditormcp.log`
+ログファイル: `study_unrealeditormcp.log`
 
 ```bash
 # ログをリアルタイムで確認（PowerShell）
-Get-Content -Path unrealeditormcp.log -Wait
+Get-Content -Path study_unrealeditormcp.log -Wait
 ```
 
 #### Unreal Editor のログ

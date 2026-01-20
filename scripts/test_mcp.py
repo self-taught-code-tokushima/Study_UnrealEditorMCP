@@ -1,5 +1,5 @@
 """
-Test script for UnrealEditorMCP server.
+Test script for Study UnrealEditorMCP server.
 
 This script verifies that the MCP server can:
 - Start up correctly
@@ -17,12 +17,12 @@ from mcp.client.stdio import stdio_client
 async def test_mcp_server():
     """Test the MCP server."""
     print("=" * 60)
-    print("UnrealEditorMCP - Server Test")
+    print("Study UnrealEditorMCP - Server Test")
     print("=" * 60)
 
     server_params = StdioServerParameters(
         command="uv",
-        args=["run", "unreal-editor-mcp"],
+        args=["run", "study-unrealeditormcp"],
     )
 
     try:
